@@ -6,7 +6,7 @@
 /*   By: mboutahi <mboutahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 15:30:19 by mboutahi          #+#    #+#             */
-/*   Updated: 2024/11/18 16:24:37 by mboutahi         ###   ########.fr       */
+/*   Updated: 2024/11/18 17:44:42 by mboutahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,5 +22,6 @@ char	*ft_strjoin(char const *s1, char const *s2);
 int		ft_strchr(const char *s, int c);
 char    *ft_substr(char const *s, unsigned int start, size_t len);
 char    *ft_strdup(const char *s1);
+size_t	ft_strlen(const char *s);
 
 #endif

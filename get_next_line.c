@@ -6,7 +6,7 @@
 /*   By: mboutahi <mboutahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 16:25:26 by mboutahi          #+#    #+#             */
-/*   Updated: 2024/11/18 16:27:07 by mboutahi         ###   ########.fr       */
+/*   Updated: 2024/11/18 17:42:56 by mboutahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #define BUFFER_SIZE 7
 #endif
 
-char	*nl_checker( char *line, size_t b_size)
+char	*nl_checker( char *line)
 {
 	char	*left;
 	int			i;
@@ -37,31 +37,52 @@ char	*get_next_line(int fd)
 	char		*line;
     char		buffer[BUFFER_SIZE + 1];
     ssize_t		buffer_read;
+	char		*temp;
 	
-	line = "";
+	line = ft_strdup("");
     if (fd < 0 || BUFFER_SIZE == 0)
         return (NULL);
-	line = ft_strjoin(line, left);
-	//printf("%s", line);
-	buffer_read = read(fd, buffer, BUFFER_SIZE);
+		if (left)
+		{
+			temp = line;
+			line = ft_strjoin(line, left); // Append leftovers to line
+			free(temp); // Free the old line
+			free(left); // Free the old leftovers
+			left = NULL; // Reset leftovers
+		}
+		buffer_read = read(fd, buffer, BUFFER_SIZE);
 	while(buffer_read > 0)
 	{
 		buffer[buffer_read] = 0;
+		temp = line;
 		line = ft_strjoin(line, buffer);
-		left = nl_checker(line, BUFFER_SIZE);
-		// line = ft_strjoin(line, nl_checker(line, BUFFER_SIZE));
-		
+		free(temp);
 		if (ft_strchr(line, '\n') != 0)
-			return (ft_substr(line, 0, ft_strchr(line, '\n') + 1));
+		{
+			left = nl_checker(line);
+			temp = line;
+			line = ft_substr(line, 0, ft_strchr(line, '\n') + 1);
+			free(temp); // Free the old line
+			return (line);
+		}
 	}
+	if (ft_strlen(line) == 0)
+		{
+			free(line); // Free the empty `line`
+			return (NULL); // Nothing left to read
+		}
 	return (line);
 }
 #include <stdio.h>
 int main()
 {
-	
-	
-    int fd = open("file1.txt", O_RDONLY, 0777);
-	 get_next_line(fd);
-	    printf("%s", get_next_line(fd));
+	int fd = open("file1.txt", O_RDONLY, 0777);
+	char *line;
+
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line);
+		free(line);
+	}
+	close(fd);
 }
