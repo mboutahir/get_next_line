@@ -6,7 +6,7 @@
 /*   By: mboutahi <mboutahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 16:25:26 by mboutahi          #+#    #+#             */
-/*   Updated: 2024/11/18 17:42:56 by mboutahi         ###   ########.fr       */
+/*   Updated: 2024/11/19 15:19:16 by mboutahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,52 @@
 #define BUFFER_SIZE 7
 #endif
 
-char	*nl_checker( char *line)
+static char	*getl(char *left)
 {
-	char	*left;
-	int			i;
+	int	i;
+	int	j;
+	char	*line;
 
-	i = ft_strchr(line, '\n');
-	// if (left != NULL)
-	// 	free(left);
-	if (i != 0)
-		left = ft_substr(line, i + 1, ft_strlen(line) - (i + 1));
-		// printf("%s", left);
-	else
-		left = NULL;
-		
-	return (left);
+	i = 0;
+	j = 0;
+	while(left[i] != '\n' && left[i])
+		i++;
+	if(left[i] == '\n')
+		i++;
+	line = malloc(i + 1);
+	while(j < i)
+	{
+		line[j] = left[j];
+		j++;
+	}
+	line[j] = 0;
+	return (line);
+}
+static char	*storeleft(char *left)
+{
+	int			i;
+	int			j;
+	static char	*line;
+	int	k;
+
+	i = 0;
+	j = 0;
+	k = 0;
+	while (left[i] != '\n' && left[i])
+		i++;
+	if (left[i] == '\n')
+		i++;
+	while (left[i + j] != '\n' && left[i])
+		j++;
+	line = malloc(j + 1);
+	
+	while (k < i + j)
+	{
+		line[k] = left[i];
+		k++;
+	}
+	line[j] = 0;
+	return (line);
 }
 char	*get_next_line(int fd)
 {
@@ -37,40 +68,17 @@ char	*get_next_line(int fd)
 	char		*line;
     char		buffer[BUFFER_SIZE + 1];
     ssize_t		buffer_read;
-	char		*temp;
 	
-	line = ft_strdup("");
     if (fd < 0 || BUFFER_SIZE == 0)
         return (NULL);
-		if (left)
-		{
-			temp = line;
-			line = ft_strjoin(line, left); // Append leftovers to line
-			free(temp); // Free the old line
-			free(left); // Free the old leftovers
-			left = NULL; // Reset leftovers
-		}
-		buffer_read = read(fd, buffer, BUFFER_SIZE);
+	buffer_read = read(fd, buffer, BUFFER_SIZE);
 	while(buffer_read > 0)
 	{
 		buffer[buffer_read] = 0;
-		temp = line;
-		line = ft_strjoin(line, buffer);
-		free(temp);
-		if (ft_strchr(line, '\n') != 0)
-		{
-			left = nl_checker(line);
-			temp = line;
-			line = ft_substr(line, 0, ft_strchr(line, '\n') + 1);
-			free(temp); // Free the old line
-			return (line);
-		}
+		left = ft_strjoin(left, buffer);
 	}
-	if (ft_strlen(line) == 0)
-		{
-			free(line); // Free the empty `line`
-			return (NULL); // Nothing left to read
-		}
+	line = getl(left);
+	left = storeleft(left);
 	return (line);
 }
 #include <stdio.h>
