@@ -6,7 +6,7 @@
 /*   By: mboutahi <mboutahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 16:25:26 by mboutahi          #+#    #+#             */
-/*   Updated: 2024/11/19 15:19:16 by mboutahi         ###   ########.fr       */
+/*   Updated: 2024/11/20 15:40:42 by mboutahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,19 @@
 
 static char	*getl(char *left)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	char	*line;
 
 	i = 0;
 	j = 0;
-	while(left[i] != '\n' && left[i])
+	while (left[i] != '\n' && left[i])
 		i++;
-	if(left[i] == '\n')
+	if (left[i] == '\n')
 		i++;
 	line = malloc(i + 1);
 
-	while(j < i)
+	while (j < i)
 	{
 		line[j] = left[j];
 		j++;
@@ -40,10 +40,10 @@ static char	*getl(char *left)
 }
 static char	*storeleft(char *left)
 {
-	int			i;
-	int			j;
+	int				i;
+	int				j;
 	static char		*line;
-	int			k;	
+	int				k;	
 
 	i = 0;
 	j = 0;
@@ -62,7 +62,7 @@ static char	*storeleft(char *left)
 		k++;
 	}
 	line[k] = 0;
-	free(left);
+	// free(left);
 	return (line);
 }
 char	*get_next_line(int fd)
@@ -70,26 +70,30 @@ char	*get_next_line(int fd)
 	static char	*left;
 	char		*line;
    	char		buffer[BUFFER_SIZE + 1];
-    	ssize_t		buffer_read;
+    ssize_t		buffer_read;
+	char		*temp;
 	
-    	if (fd < 0 || BUFFER_SIZE == 0)
-        	return (NULL);
+	line = NULL;
+	buffer_read = 0;
+    if (fd < 0 || BUFFER_SIZE <= 0)
+    	return (NULL);
 	//buffer_read = read(fd, buffer, BUFFER_SIZE);
-	if(buffer_read < 0)
-		return NULL;
-	while(1)  //(buffer_read = read(fd, buffer, BUFFER_SIZE))  > 0)
+	while (1)  //(buffer_read = read(fd, buffer, BUFFER_SIZE))  > 0)
 	{
 		buffer_read = read(fd, buffer, BUFFER_SIZE);
 		buffer[buffer_read] = '\0';
+		temp = left;
 		left = ft_strjoin(left, buffer);
-		if(ft_strchr(left, '\n') || buffer_read <= 0)
+		free(temp);
+		if (ft_strchr(left, '\n') || buffer_read <= 0)
 			break;
-		printf("c");
 	}
 	if(!left || *left == '\0')
 		return NULL;
+	temp = left;
 	line = getl(left);
 	left = storeleft(left);
+	free (temp);
 	return (line);
 }
 #include <stdio.h>
