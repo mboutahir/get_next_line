@@ -11,8 +11,9 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 7
+#define BUFFER_SIZE 5
 #endif
 
 static char	*getl(char *left)
@@ -28,6 +29,7 @@ static char	*getl(char *left)
 	if(left[i] == '\n')
 		i++;
 	line = malloc(i + 1);
+
 	while(j < i)
 	{
 		line[j] = left[j];
@@ -40,8 +42,8 @@ static char	*storeleft(char *left)
 {
 	int			i;
 	int			j;
-	static char	*line;
-	int	k;
+	static char		*line;
+	int			k;	
 
 	i = 0;
 	j = 0;
@@ -54,29 +56,38 @@ static char	*storeleft(char *left)
 		j++;
 	line = malloc(j + 1);
 	
-	while (k < i + j)
+	while (k < j)
 	{
-		line[k] = left[i];
+		line[k] = left[i + k];
 		k++;
 	}
-	line[j] = 0;
+	line[k] = 0;
+	free(left);
 	return (line);
 }
 char	*get_next_line(int fd)
 {
 	static char	*left;
 	char		*line;
-    char		buffer[BUFFER_SIZE + 1];
-    ssize_t		buffer_read;
+   	char		buffer[BUFFER_SIZE + 1];
+    	ssize_t		buffer_read;
 	
-    if (fd < 0 || BUFFER_SIZE == 0)
-        return (NULL);
-	buffer_read = read(fd, buffer, BUFFER_SIZE);
-	while(buffer_read > 0)
+    	if (fd < 0 || BUFFER_SIZE == 0)
+        	return (NULL);
+	//buffer_read = read(fd, buffer, BUFFER_SIZE);
+	if(buffer_read < 0)
+		return NULL;
+	while(1)  //(buffer_read = read(fd, buffer, BUFFER_SIZE))  > 0)
 	{
-		buffer[buffer_read] = 0;
+		buffer_read = read(fd, buffer, BUFFER_SIZE);
+		buffer[buffer_read] = '\0';
 		left = ft_strjoin(left, buffer);
+		if(ft_strchr(left, '\n') || buffer_read <= 0)
+			break;
+		printf("c");
 	}
+	if(!left || *left == '\0')
+		return NULL;
 	line = getl(left);
 	left = storeleft(left);
 	return (line);
