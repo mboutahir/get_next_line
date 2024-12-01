@@ -6,7 +6,7 @@
 /*   By: mboutahi <mboutahi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 16:25:26 by mboutahi          #+#    #+#             */
-/*   Updated: 2024/11/27 18:49:42 by mboutahi         ###   ########.fr       */
+/*   Updated: 2024/12/01 09:13:05 by mboutahi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ static char	*storeleft(char *left)
 
 	i = 0;
 	j = 0;
-	if (!left)
-		return (NULL);
 	if (!*left)
 		return (free(left), NULL);
 	while (left[i] && left[i] != '\n')
